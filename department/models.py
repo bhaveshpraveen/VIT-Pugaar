@@ -1,8 +1,7 @@
+from django.core.validators import RegexValidator
 from django.db import models
 
 from hostel.models import Block, Floor
-from .utils import DetailsMixin
-
 
 # TODO
 """
@@ -17,50 +16,17 @@ class Department(models.Model):
         return "{dep}".format(dep=self.name)
 
 
-class Cleaner(DetailsMixin):
-    department = models.ForeignKey(Department, related_name='cleaners')
-    block = models.ForeignKey(Block, related_name='cleaners')
-    floor = models.ForeignKey(Floor, related_name='cleaners')
-    # toilet = models.ForeignKey(Toilet, related_name='cleaners')
+class Employee(models.Model):
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{10}$',
+                                 message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
 
-
-    def __str__(self):
-        return "{} works in {} department and is currently assigned to {} block in floor {}".format(
-            self.name.title(),
-            self.department.name,
-            self.block.name,
-            self.floor.floor_number
-        )
-
-
-
-class Plumber(DetailsMixin):
-    department = models.ForeignKey(Department, related_name='plumbers')
-    block = models.ForeignKey(Block, related_name='plumbers')
+    id = models.AutoField(unique=True, primary_key=True)
+    name = models.CharField(max_length=125)
+    phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=True)  # validators should be a list
+    department = models.ForeignKey(Department, related_name='dept_employees')
+    block = models.ForeignKey(Block, related_name='block_employees')
+    floor = models.ForeignKey(Floor, related_name='floor_employees', null=True)
 
     def __str__(self):
-        return "Plumber: {} belongs to {} department".format(self.name, self.department.name)
+        return "{} of department {}".format(self.name, self.department)
 
-
-class Carpenter(DetailsMixin):
-    department = models.ForeignKey(Department, related_name='carpenters')
-    block = models.ForeignKey(Block, related_name='carpenters')
-
-    def __str__(self):
-        return "Carpenter: {} belongs to {} department".format(self.name, self.department.name)
-
-
-class Electrician(DetailsMixin):
-    department = models.ForeignKey(Department, related_name='electricians')
-    block = models.ForeignKey(Block, related_name='electricians')
-
-    def __str__(self):
-        return "Electrician: {} belongs to {} department".format(self.name, self.department.name)
-
-
-class Painter(DetailsMixin):
-    department = models.ForeignKey(Department, related_name='painters')
-    block = models.ForeignKey(Block, related_name='painters')
-
-    def __str__(self):
-        return "Painter: {} belongs to {} department".format(self.name, self.department.name)

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'hostel',
     'department',
+    'complaint',
 ]
 
 MIDDLEWARE = [

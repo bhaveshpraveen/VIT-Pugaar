@@ -36,11 +36,16 @@ class Block(models.Model):
 
 
 class Floor(models.Model):
-    block = models.ForeignKey(Block, related_name='block', on_delete=models.CASCADE)
-    floor_number = models.IntegerField()
+    block = models.ForeignKey(Block, related_name='block_floors', on_delete=models.CASCADE)
+    floor_number = models.PositiveIntegerField()
 
     def __str__(self):
         return "Floor {} in block {}".format(self.floor_number, self.block.name)
+
+    class Meta:
+        unique_together = (
+            ('block', 'floor_number'),
+        )
 
 
 # class Room(models.Model):
