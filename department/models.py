@@ -1,16 +1,19 @@
 from django.core.validators import RegexValidator
 from django.db import models
+from django.conf import settings
 
 from hostel.models import Block, Floor
 
 # TODO
 """
-    Assign a user as the head of the Department
+    Assign a user as the head of the Department(done)
+    Assign a slug to the department model. 
 """
 
 class Department(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
 
     def __str__(self):
         return "{dep}".format(dep=self.name)

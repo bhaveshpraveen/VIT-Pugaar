@@ -36,6 +36,7 @@ class Complaint(models.Model):
 # TODO
 '''
 If floor complaint -> slug = block-floor-dept
-if roon complaint -> slug = block-floor-room-dept
+if room complaint -> slug = block-floor-room-dept
+remove user room from the model and use it from the user model itself
 '''
 
