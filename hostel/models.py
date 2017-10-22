@@ -7,6 +7,7 @@ from django.utils.text import slugify
     2. associate the user and complaints with all the models below
     3. set predefined values(choices) for floor numbers
     4. I've set the choices for the block, you need to add in the names of the block before saving
+    5. New Permission for Block and Floor
 '''
 
 
@@ -36,7 +37,7 @@ class Block(models.Model):
 
 
 class Floor(models.Model):
-    block = models.ForeignKey(Block, related_name='block_floors', on_delete=models.CASCADE)
+    block = models.ForeignKey(Block, related_name='floors', on_delete=models.CASCADE)
     floor_number = models.PositiveIntegerField()
 
     def __str__(self):

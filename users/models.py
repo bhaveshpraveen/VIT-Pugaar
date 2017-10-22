@@ -57,8 +57,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     admin = models.BooleanField(default=False)
     staff = models.BooleanField(default=False)
     room_no = models.IntegerField(blank=True, null=True)
-    floor = models.ForeignKey(Floor, related_name='user', blank=True, null=True)
-    block = models.ForeignKey(Block, related_name='user', blank=True, null=True)
+    floor = models.ForeignKey(Floor, related_name='users', blank=True, null=True)
+    block = models.ForeignKey(Block, related_name='users', blank=True, null=True)
 
     objects = MyUserManager()
 

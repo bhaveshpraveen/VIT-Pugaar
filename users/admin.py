@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib import admin
-from django.contrib.admin.forms import AdminPasswordChangeForm
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
@@ -60,7 +59,7 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('registration_number', )
+    list_display = ('registration_number', 'first_name', 'email', 'admin', 'staff')
     list_filter = ('registration_number', 'first_name', 'email', 'floor', 'block', 'room_no')
     fieldsets = (
         (None, {'fields': ('registration_number', 'password', )}),
