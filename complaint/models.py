@@ -15,7 +15,7 @@ class Complaint(models.Model):
     employee = models.ForeignKey(Employee, related_name='complaints')
     user_block = models.ForeignKey(Block, related_name='complaints')
     user_floor = models.ForeignKey(Floor, related_name='complaints')
-    slug = models.SlugField(max_length=100, blank=True)
+    slug = models.SlugField(max_length=100, blank=True, primary_key=True)
     status = models.BooleanField(default=False)
     issue = models.BooleanField(default=False)
     # issue count -> number of times issue was raised for the same complaint

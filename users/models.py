@@ -44,7 +44,7 @@ class MyUserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    registration_number = models.CharField(max_length=15, unique=True)
+    registration_number = models.CharField(max_length=15, unique=True, primary_key=True)
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
