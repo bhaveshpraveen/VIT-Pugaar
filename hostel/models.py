@@ -28,7 +28,7 @@ class Block(models.Model):
     slug = models.SlugField(null=False, blank=True, primary_key=True)
 
     def __str__(self):
-        return "{}-{}".format(self.name, self.block_letter)
+        return "{}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.name = self.HOSTEL_NAMES.get(self.block_letter)
@@ -39,9 +39,15 @@ class Block(models.Model):
 class Floor(models.Model):
     block = models.ForeignKey(Block, related_name='floors', on_delete=models.CASCADE)
     floor_number = models.PositiveIntegerField()
+    slug = models.SlugField(null=False, blank=True, primary_key=True)
 
     def __str__(self):
         return "Floor {} in block {}".format(self.floor_number, self.block.name)
+
+    def save(self, *args, **kwargs):
+        slug = "{} {}".format(self.block, str(self.floor_number))
+        self.slug = slugify(slug)
+        super(Floor, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (

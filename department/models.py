@@ -37,5 +37,5 @@ class Employee(models.Model):
     floor = models.ForeignKey(Floor, related_name='employees', null=True, blank=True)
 
     def __str__(self):
-        return "{} belongs to department {}".format(self.name, self.department)
+        return "{} of department {}".format(self.name, self.department)
 
