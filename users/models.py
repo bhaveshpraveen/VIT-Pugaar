@@ -19,7 +19,7 @@ class MyUserManager(BaseUserManager):
 
         user = self.model(
             email=self.normalize_email(email),
-            registration_number = registration_number,
+            registration_number=registration_number.lower(),
             phone_number=phone_number
         )
         user.set_password(password)
@@ -34,7 +34,7 @@ class MyUserManager(BaseUserManager):
         user = self.create_user(
             email=email,
             password=password,
-            registration_number=registration_number,
+            registration_number=registration_number.lower(),
             phone_number=phone_number
         )
         user.admin = True

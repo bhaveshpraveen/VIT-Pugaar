@@ -3,7 +3,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from .serializers import (
     UserSerializer,
@@ -31,7 +31,7 @@ class ComplaintList(ListAPIView):
     serializer_class = ComplaintSerializer
 
 
-class ComplaintDetail(RetrieveUpdateDestroyAPIView):
+class ComplaintDetail(RetrieveAPIView):
     queryset = Complaint.objects.all()
     serializer_class = ComplaintSerializer
 
@@ -41,7 +41,7 @@ class DepartmentList(ListAPIView):
     serializer_class = DepartmentSerializer
 
 
-class DepartmentDetail(RetrieveUpdateDestroyAPIView):
+class DepartmentDetail(RetrieveAPIView):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
 
@@ -51,7 +51,7 @@ class EmployeeList(ListAPIView):
     serializer_class = EmployeeSerializer
 
 
-class EmployeeDetail(RetrieveUpdateDestroyAPIView):
+class EmployeeDetail(RetrieveAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
 
@@ -61,7 +61,7 @@ class BlockList(ListAPIView):
     serializer_class = BlockSerializer
 
 
-class BlockDetail(RetrieveUpdateDestroyAPIView):
+class BlockDetail(RetrieveAPIView):
     queryset = Block.objects.all()
     serializer_class = BlockSerializer
 
@@ -71,7 +71,7 @@ class FloorList(ListAPIView):
     serializer_class = FloorSerializer
 
 
-class FloorDetail(RetrieveUpdateDestroyAPIView):
+class FloorDetail(RetrieveAPIView):
     queryset = Floor.objects.all()
     serializer_class = FloorSerializer
 
@@ -81,7 +81,10 @@ class UserList(ListAPIView):
     serializer_class = UserSerializer
 
 
+class UserDetail(RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
-
+#todo Refactor UserDetail
 
