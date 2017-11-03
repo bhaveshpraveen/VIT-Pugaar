@@ -40,6 +40,4 @@ def send_message(receiver, message):
 
     return r.status_code
 
-def assign_employee(data):
-    pass
 

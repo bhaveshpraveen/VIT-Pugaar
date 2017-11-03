@@ -18,17 +18,18 @@ from .serializers import (
 )
 from complaint.utils import (
     make_slug,
-    assign_employee,
 )
 from complaint.models import Complaint
 from department.models import (
     Department,
     Employee
 )
+from department.utils import floor_specific_departments
 from hostel.models import (
     Block,
     Floor,
 )
+
 
 
 User = get_user_model()
@@ -97,106 +98,6 @@ class UserDetail(RetrieveAPIView):
 #todo Refactor UserDetail
 
 
-# class UserCreate(APIView):
-#
-#
-#     def POST(self, request, format=None):
-#         print(request.data)
-#         floor_number = request.data.get('floor_number', None)
-#         block = request.data.get('block', None)
-#         data = {
-#             'block': None,
-#             'floor': None,
-#             'registration_number': None,
-#             'email': None,
-#             'first_name': None,
-#             'middle_name': None,
-#             'last_name': None,
-#             'phone_number': None,
-#             'is_active': False,
-#             'admin': False,
-#             'staff': False,
-#             'room_no': None,
-#         }
-#         try:
-#             data['block'] = Block.objects.get(block_letter=block)
-#         except Exception as e:
-#             data['block'] = None
-#         try:
-#             data['floor'] = data['block'].floors.get(floor_number=floor_number)
-#         except Exception as e:
-#             data['floor'] = None
-#
-#         data['registration_number'] = request.data.get('registration_number', None)
-#         data['email'] = request.data.get('email', None)
-#         data['first_name'] = request.data.get('first_name', None)
-#         data['middle_name'] = request.data.get('middle_name', None)
-#         data['last_name'] = request.data.get('last_name', None)
-#         data['phone_number'] = request.data.get('phone_number', None)
-#         data['room_no'] = request.data.get('Room_no', None)
-#
-#         print('Here')
-#         try:
-#             user = User.objects.create(**data)
-#         except Exception as e:
-#             return Response(status=status.HTTP_400_BAD_REQUEST)
-#
-#         serializer = UserSerializer(user)
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-#
-#
-#     def put(self, request, format=None):
-#
-#         floor_number = request.data.get('floor_number', None)
-#         block = request.data.get('block', None)
-#         data = {
-#             'block': None,
-#             'floor': None,
-#             'registration_number': None,
-#             'email': None,
-#             'first_name': None,
-#             'middle_name': None,
-#             'last_name': None,
-#             'phone_number': None,
-#             'is_active': True,
-#             'admin': False,
-#             'staff': False,
-#             'room_no': None,
-#         }
-#
-#         try:
-#             data['block'] = Block.objects.get(block_letter=block)
-#             data['floor'] = data['block'].floors.get(floor_number=floor_number)
-#         except Department.DoesNotExist or Floor.DoesNotExist:
-#             return Response(status=status.HTTP_400_BAD_REQUEST)
-#
-#         data['email'] = request.data.get('email', None)
-#         data['first_name'] = request.data.get('first_name', None)
-#         data['middle_name'] = request.data.get('middle_name', None)
-#         data['last_name'] = request.data.get('last_name', None)
-#         data['phone_number'] = request.data.get('phone_number', None)
-#         data['room_no'] = request.data.get('Room_no', None)
-#
-#         try:
-#             user = User.objects.get(registration_number=data['registration_number'])
-#         except User.DoesNotExist:
-#             return Response(status=status.HTTP_400_BAD_REQUEST)
-#
-#         serializer = UserSerializer(user, data=data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#
-#     def delete(self, request, format=None):
-#         reg_no = request.data.get('registration_number')
-#
-#         try:
-#             user = User.objects.get(registration_number=reg_no)
-#         except User.DoesNotExist:
-#             return Response(status=status.HTTP_400_BAD_REQUEST)
-#
-#         user.is_active = False
 
 """
 Accepted data
@@ -257,10 +158,32 @@ class UserCreate(APIView):
                 return Response(res, status=status.HTTP_400_BAD_REQUEST)
             return Response(status=status.HTTP_201_CREATED)
 
-
-# assign the employee
+ #  todo: what to do if there are no employees satisfying the given criteria while assigning ?
 class ComplaintCreate(APIView):
     permission_classes = (permissions.IsAuthenticated, )
+
+    def assign_employee(self, data):
+        q = Employee.objects.filter(
+            department=data['department'],
+            block=data['user_block']
+        )
+        if data['department'] in floor_specific_departments:
+            q = q.filter(
+                floor=data['user_floor']
+            )
+        if q.exists():
+            # Assign the complaint to the employee who has minimum number of complaints allocated to him at the time
+
+            minimum = 0
+            for i in range(1, q.count()):
+                if q[i].complaints.count() < q[minimum].complaints.count():
+                    minimum = i
+
+            data['employee'] = q[minimum]
+            return data
+
+        else:
+            return data
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -280,7 +203,7 @@ class ComplaintCreate(APIView):
         }
 
         data['slug'] = make_slug(data)
-        data['employee'] = assign_employee(data)
+        data = self.assign_employee(data)
 
         try:
 
@@ -293,10 +216,9 @@ class ComplaintCreate(APIView):
             }
 
             print(res)
-            return Response(res, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'details': res}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(
-            ComplaintSerializer(data=obj),
             status=status.HTTP_201_CREATED
         )
 
