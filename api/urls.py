@@ -1,15 +1,17 @@
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework import permissions
 
 from api.views import ComplaintDetail, DepartmentDetail, EmployeeDetail, BlockDetail, FloorDetail, UserDetail
-from .views import ComplaintList, UserList, DepartmentList, EmployeeList, BlockList, FloorList, user_create
+from .views import ComplaintList, UserList, DepartmentList, EmployeeList, BlockList, FloorList, UserCreate, ComplaintCreate
 
 urlpatterns = [
     url(r'^complaints/$', ComplaintList.as_view()),
+    url(r'complaints/create/$', ComplaintCreate.as_view()),
     url(r'^complaints/(?P<pk>[0-9a-zA-z\-]+)/$', ComplaintDetail.as_view()),
 
     url(r'^users/$', UserList.as_view()),
-    url(r'^user/profile/$', user_create),
+    url(r'^users/create/$', UserCreate.as_view()),
     url(r'^users/(?P<pk>[0-9a-zA-Z\-]+)/$', UserDetail.as_view()),
 
 

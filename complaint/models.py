@@ -6,7 +6,6 @@ from department.models import (
     Employee)
 
 from hostel.models import Floor, Block
-from .utils import make_slug
 
 
 class Complaint(models.Model):
@@ -30,9 +29,11 @@ class Complaint(models.Model):
 
     # TODO replace this method with methods in the views that take parameters as per the room or floor complaint and save them accordingly
     def save(self, *args, **kwargs):
-        self.user_room = self.user.room_no
-        self.slug = make_slug(str(self.department.slug), str(self.user_block.slug), str(self.user_floor.floor_number), str(self.user.room_no))
-        super(Complaint, self).save(*args, **kwargs)
+        print('In model')
+        # self.slug = make_slug(str(self.department.slug), str(self.user_block.slug), str(self.user_floor.floor_number), str(self.user.room_no))
+        print(vars(self))
+        obj = super(Complaint, self).save(*args, **kwargs)
+        return obj
 
     class Meta:
         unique_together = (
@@ -50,8 +51,8 @@ class Complaint(models.Model):
 
 # TODO
 '''
-If floor complaint -> slug = block-floor-dept(done)
-if room complaint -> slug = block-floor-room-dept(done)
+If floor complaint -> slug = block-floor-dept
+if room complaint -> slug = block-floor-room-dept
 Assign the user
 Assign the department
 Assign an employee based on the complaint

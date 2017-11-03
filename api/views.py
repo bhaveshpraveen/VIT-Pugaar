@@ -1,10 +1,12 @@
+import json
+
 from django.contrib.auth import get_user_model
 from django.http import Http404
-from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework import permissions
 
 from .serializers import (
     UserSerializer,
@@ -13,6 +15,10 @@ from .serializers import (
     FloorSerializer,
     BlockSerializer,
     DepartmentSerializer,
+)
+from complaint.utils import (
+    make_slug,
+    assign_employee,
 )
 from complaint.models import Complaint
 from department.models import (
@@ -24,7 +30,6 @@ from hostel.models import (
     Floor,
 )
 
-import json
 
 User = get_user_model()
 
@@ -193,50 +198,112 @@ class UserDetail(RetrieveAPIView):
 #
 #         user.is_active = False
 
+"""
+Accepted data
+{
+"registration_number": "20BCE0904",
+"email": "bhaveshpraveen10@gmail.com",
+"first_name": "Yoda",
+"phone_number": "9789959296",
+"last_name": "Jedi"
+}
+"""
 
 
-@api_view(['POST'])
-def user_create(request, *args, **kwargs):
-    print(request.data)
-    if request.method == 'POST':
-        print(request.POST)
-        floor_number = request.POST.get('floor_number', None)
-        block = request.POST.get('block', None)
+# todo is_active is set to True, confirm email not set yet
+# todo existing user registers another account, how to handle this case ? [UNIQUE constraint failed: users_user.registration_number]
+
+class UserCreate(APIView):
+    def post(self, request, *args, **kwargs):
+            floor_number = request.data.get('floor_number', None)
+            block = request.data.get('block', None)
+            data = {
+                'block': None,
+                'floor': None,
+                'registration_number': None,
+                'email': None,
+                'first_name': None,
+                'middle_name': None,
+                'last_name': None,
+                'phone_number': None,
+                'is_active': True,
+                'admin': False,
+                'staff': False,
+                'room_no': None,
+            }
+            try:
+                data['block'] = Block.objects.get(block_letter=block)
+            except Exception as e:
+                data['block'] = None
+            try:
+                data['floor'] = data['block'].floors.get(floor_number=floor_number)
+            except Exception as e:
+                data['floor'] = None
+
+            data['registration_number'] = request.data.get('registration_number', None)
+            data['email'] = request.data.get('email', None)
+            data['first_name'] = request.data.get('first_name', None)
+            data['middle_name'] = request.data.get('middle_name', None)
+            data['last_name'] = request.data.get('last_name', None)
+            data['phone_number'] = request.data.get('phone_number', None)
+            data['room_no'] = request.data.get('Room_no', None)
+
+            print(data)
+            try:
+                user = User.objects.create(**data)
+            except Exception as e:
+                res = {'detail': e.__str__()}
+                print(res)
+                return Response(res, status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_201_CREATED)
+
+
+# assign the employee
+class ComplaintCreate(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        department = request.data.get('department', None)
+        block = request.data.get('user_block', None)
+        floor = request.data.get('user_floor', None)
+
         data = {
-            'block': None,
-            'floor': None,
-            'registration_number': None,
-            'email': None,
-            'first_name': None,
-            'middle_name': None,
-            'last_name': None,
-            'phone_number': None,
-            'is_active': False,
-            'admin': False,
-            'staff': False,
-            'room_no': None,
+            'user': user,
+            'user_room': request.data.get('user_room', None),
+            'department': Department.objects.get(pk=department) if department else None,
+            'user_block': Block.objects.get(pk=block) if block else None,
+            'user_floor': Floor.objects.get(pk=floor) if floor else None,
+            'status': False,
+            'issue': False,
+            'description': request.data.get('description', None)
         }
-        try:
-            data['block'] = Block.objects.get(block_letter=block)
-        except Exception as e:
-            data['block'] = None
-        try:
-            data['floor'] = data['block'].floors.get(floor_number=floor_number)
-        except Exception as e:
-            data['floor'] = None
 
-        data['registration_number'] = request.POST.get('registration_number', None)
-        data['email'] = request.POST.get('email', None)
-        data['first_name'] = request.POST.get('first_name', None)
-        data['middle_name'] = request.POST.get('middle_name', None)
-        data['last_name'] = request.POST.get('last_name', None)
-        data['phone_number'] = request.POST.get('phone_number', None)
-        data['room_no'] = request.POST.get('Room_no', None)
+        data['slug'] = make_slug(data)
+        data['employee'] = assign_employee(data)
 
-        print(data)
         try:
-            user = User.objects.create(**data)
+
+            obj = Complaint.objects.create(**data)
+
         except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        print('Second here')
-        return Response(status=status.HTTP_201_CREATED)
+
+            res = {
+                'details': e.__str__()
+            }
+
+            print(res)
+            return Response(res, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            ComplaintSerializer(data=obj),
+            status=status.HTTP_201_CREATED
+        )
+
+
+
+
+
+
+
+

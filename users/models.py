@@ -50,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=255,
     )
     first_name = models.CharField(max_length=50)
-    middle_name = models.CharField(max_length=50, blank=True)
+    middle_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50)
     phone_number = models.CharField(validators=[phone_regex], max_length=15)
     is_active = models.BooleanField(default=True)
