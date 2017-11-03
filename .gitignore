@@ -3,3 +3,6 @@
 **/.idea
 .idea/*/*
 **/*.pyc
+waytosms.txt
+.DS_Store
+.swp
