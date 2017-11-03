@@ -2,14 +2,16 @@ from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from api.views import ComplaintDetail, DepartmentDetail, EmployeeDetail, BlockDetail, FloorDetail, UserDetail
-from .views import ComplaintList, UserList, DepartmentList, EmployeeList, BlockList, FloorList
+from .views import ComplaintList, UserList, DepartmentList, EmployeeList, BlockList, FloorList, user_create
 
 urlpatterns = [
     url(r'^complaints/$', ComplaintList.as_view()),
     url(r'^complaints/(?P<pk>[0-9a-zA-z\-]+)/$', ComplaintDetail.as_view()),
 
     url(r'^users/$', UserList.as_view()),
+    url(r'^user/profile/$', user_create),
     url(r'^users/(?P<pk>[0-9a-zA-Z\-]+)/$', UserDetail.as_view()),
+
 
     url(r'^departments/$', DepartmentList.as_view()),
     url(r'^departments/(?P<pk>[0-9a-zA-Z\-]+)/$', DepartmentDetail.as_view()),
@@ -22,6 +24,8 @@ urlpatterns = [
 
     url(r'^floors/$', FloorList.as_view()),
     url(r'^floors/(?P<pk>[0-9a-zA-Z\-]+)/$', FloorDetail.as_view()),
+
+
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
