@@ -66,7 +66,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['email', 'phone_number']
 
     def get_full_name(self):
-        # The user is identified by their email address
+
         return "{} {} {}".format(
             self.first_name,
             self.middle_name,
@@ -82,12 +82,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.registration_number
 
-    # django uses this method to check if a particular user is a super_user
+    ''' django uses this method to check if a particular user is a super_user '''
     @property
     def is_superuser(self):
         return self.admin
 
-    # django uses this method to check if a particular user is a staff
+    ''' django uses this method to check if a particular user is a staff '''
     @property
     def is_staff(self):
         return self.staff

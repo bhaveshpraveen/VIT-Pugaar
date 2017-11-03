@@ -1,7 +1,6 @@
 import json
 
 from django.contrib.auth import get_user_model
-from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -29,7 +28,6 @@ from hostel.models import (
     Block,
     Floor,
 )
-
 
 
 User = get_user_model()
@@ -118,6 +116,7 @@ class UserCreate(APIView):
     def post(self, request, *args, **kwargs):
             floor_number = request.data.get('floor_number', None)
             block = request.data.get('block', None)
+
             data = {
                 'block': None,
                 'floor': None,
@@ -132,12 +131,16 @@ class UserCreate(APIView):
                 'staff': False,
                 'room_no': None,
             }
+
             try:
                 data['block'] = Block.objects.get(block_letter=block)
+
             except Exception as e:
                 data['block'] = None
+
             try:
                 data['floor'] = data['block'].floors.get(floor_number=floor_number)
+
             except Exception as e:
                 data['floor'] = None
 
@@ -150,12 +153,16 @@ class UserCreate(APIView):
             data['room_no'] = request.data.get('Room_no', None)
 
             print(data)
+
             try:
                 user = User.objects.create(**data)
+
             except Exception as e:
                 res = {'detail': e.__str__()}
                 print(res)
+
                 return Response(res, status=status.HTTP_400_BAD_REQUEST)
+
             return Response(status=status.HTTP_201_CREATED)
 
  #  todo: what to do if there are no employees satisfying the given criteria while assigning ?
@@ -167,10 +174,12 @@ class ComplaintCreate(APIView):
             department=data['department'],
             block=data['user_block']
         )
+
         if data['department'] in floor_specific_departments:
             q = q.filter(
                 floor=data['user_floor']
             )
+
         if q.exists():
             # Assign the complaint to the employee who has minimum number of complaints allocated to him at the time
 
@@ -206,11 +215,9 @@ class ComplaintCreate(APIView):
         data = self.assign_employee(data)
 
         try:
-
             obj = Complaint.objects.create(**data)
 
         except Exception as e:
-
             res = {
                 'details': e.__str__()
             }
