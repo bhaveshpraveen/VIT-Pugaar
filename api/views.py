@@ -165,6 +165,16 @@ class UserCreate(APIView):
 
             return Response(status=status.HTTP_201_CREATED)
 
+
+'''
+department:electrical
+user_block:name-of-a-block
+user_floor:name-of-a-block-2
+user_room:235
+description:Fan and Light not working
+'''
+
+
  #  todo: what to do if there are no employees satisfying the given criteria while assigning ?
 class ComplaintCreate(APIView):
     permission_classes = (permissions.IsAuthenticated, )
@@ -223,13 +233,79 @@ class ComplaintCreate(APIView):
             }
 
             print(res)
-            return Response({'details': res}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'details': res},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         return Response(
             status=status.HTTP_201_CREATED
         )
 
+"""
+block_letter: e
+"""
 
+
+class BlockCreate(APIView):
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        block_letter = request.data.get('block_letter', None)
+
+        if block_letter:
+            obj = Block.objects.create(block_letter=block_letter)
+            return Response(
+                status=status.HTTP_201_CREATED
+            )
+
+        else:
+            return Response(
+                {'details': 'Please Provide Valid details'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class FloorCreate(APIView):
+    def post(self, request, *args, **kwargs):
+        block = request.data.get('block', None)
+        floor = request.data.get('floor', None)
+
+        if block and floor:
+
+            try:
+                block_obj = Block.objects.get(pk=block)
+
+            except Exception as e:
+                res = {
+                    'details': 'Make sure the given Block exists',
+                    'other_details': e.__str__()
+                }
+                return Response(
+                    res,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            try:
+                obj = Floor.objects.create(
+                    block=block_obj,
+                    floor_number=int(floor)
+                )
+
+            except Exception as e:
+
+                return Response(
+                    {'details': e.__str__()},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            print('Success Return')
+            return Response(status=status.HTTP_201_CREATED)
+
+        else:
+
+            return Response(
+                {'details': 'Please Provide Valid details'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 

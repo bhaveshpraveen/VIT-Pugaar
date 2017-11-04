@@ -10,7 +10,7 @@ from .utils import inform_employee
 
 
 class Complaint(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='complaints')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='complaints', on_delete=models.CASCADE)
     department = models.ForeignKey(Department, related_name='complaints')
     employee = models.ForeignKey(Employee, related_name='complaints')
     user_block = models.ForeignKey(Block, related_name='complaints')

@@ -3,7 +3,18 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework import permissions
 
 from api.views import ComplaintDetail, DepartmentDetail, EmployeeDetail, BlockDetail, FloorDetail, UserDetail
-from .views import ComplaintList, UserList, DepartmentList, EmployeeList, BlockList, FloorList, UserCreate, ComplaintCreate
+from .views import (
+    ComplaintList,
+    UserList,
+    DepartmentList,
+    EmployeeList,
+    BlockList,
+    FloorList,
+    UserCreate,
+    ComplaintCreate,
+    BlockCreate,
+    FloorCreate,
+)
 
 urlpatterns = [
     url(r'^complaints/$', ComplaintList.as_view()),
@@ -22,9 +33,11 @@ urlpatterns = [
     url(r'^employees/(?P<pk>[0-9a-zA-Z\-]+)/$', EmployeeDetail.as_view()),
 
     url(r'^blocks/$', BlockList.as_view()),
+    url(r'^blocks/create/$', BlockCreate.as_view()),
     url(r'^blocks/(?P<pk>[0-9a-zA-Z\-]+)/$', BlockDetail.as_view()),
 
     url(r'^floors/$', FloorList.as_view()),
+    url(r'^floors/create/$', FloorCreate.as_view()),
     url(r'^floors/(?P<pk>[0-9a-zA-Z\-]+)/$', FloorDetail.as_view()),
 
 

@@ -33,7 +33,8 @@ class Block(models.Model):
     def save(self, *args, **kwargs):
         self.name = self.HOSTEL_NAMES.get(self.block_letter)
         self.slug = slugify(self.HOSTEL_NAMES.get(self.block_letter))
-        super(Block, self).save(*args, **kwargs)
+        obj = super(Block, self).save(*args, **kwargs)
+        return obj
 
 
 class Floor(models.Model):
@@ -47,7 +48,8 @@ class Floor(models.Model):
     def save(self, *args, **kwargs):
         slug = "{} {}".format(self.block, str(self.floor_number))
         self.slug = slugify(slug)
-        super(Floor, self).save(*args, **kwargs)
+        obj = super(Floor, self).save(*args, **kwargs)
+        return obj
 
     class Meta:
         unique_together = (
