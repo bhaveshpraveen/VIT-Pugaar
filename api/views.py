@@ -315,10 +315,36 @@ class FloorCreate(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-
+'''
+user : 20BCE0904
+name : Sample Department
+'''
 class DepartmentCreate(APIView):
-    pass
+    def post(self, request, *args, **kwargs):
+        data = {
+            'name': request.data.get('name')
+        }
 
+        user = request.data.get('user', None)
+
+        if not user:
+            return Response(
+                {'details': 'Please provide a user as the head of the department'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        data['user'] = User.objects.get(pk=user)
+
+        try:
+            obj = Department.objects.create(**data)
+
+        except Exception as e:
+            return Response(
+                {'details': e.__str__()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return Response(status=status.HTTP_201_CREATED)
 
 # todo permissions
 class EmployeeCreate(APIView):

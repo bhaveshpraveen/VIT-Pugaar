@@ -15,6 +15,7 @@ from .views import (
     BlockCreate,
     FloorCreate,
     EmployeeCreate,
+    DepartmentCreate,
 )
 
 urlpatterns = [
@@ -28,6 +29,7 @@ urlpatterns = [
 
 
     url(r'^departments/$', DepartmentList.as_view()),
+    url(r'^departments/create/$', DepartmentCreate.as_view()),
     url(r'^departments/(?P<pk>[0-9a-zA-Z\-]+)/$', DepartmentDetail.as_view()),
 
     url(r'^employees/$', EmployeeList.as_view()),
