@@ -7,8 +7,7 @@ from hostel.models import Block, Floor
 
 # TODO
 """
-    Assign a user as the head of the Department(done)
-    Assign a slug to the department model. 
+    Assign a user as the head of the Department
 """
 
 
@@ -22,7 +21,8 @@ class Department(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        super(Department, self).save(*args, **kwargs)
+        obj = super(Department, self).save(*args, **kwargs)
+        return obj
 
 
 class Employee(models.Model):

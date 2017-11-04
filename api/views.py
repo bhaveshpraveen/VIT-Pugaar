@@ -247,6 +247,7 @@ block_letter: e
 """
 
 
+# todo Permissions
 class BlockCreate(APIView):
 
     def post(self, request, *args, **kwargs):
@@ -265,7 +266,13 @@ class BlockCreate(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+"""
+block : name-of-f-block
+floor : 3
+"""
 
+
+# todo Permissions
 class FloorCreate(APIView):
     def post(self, request, *args, **kwargs):
         block = request.data.get('block', None)
@@ -306,6 +313,25 @@ class FloorCreate(APIView):
                 {'details': 'Please Provide Valid details'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class DepartmentCreate(APIView):
+    pass
+
+
+# todo permissions
+class EmployeeCreate(APIView):
+    def post(self, request, *args, **kwargs):
+        name = request.data.get('name', None)
+        phone_number = request.data.get('phone_number', None)
+        department = request.data.get('department', None)
+        block = request.data.get('block', None)
+        floor = request.data.get('floor', None)
+
+
+
+
+
 
 
 
