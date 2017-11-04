@@ -75,6 +75,21 @@ class BlockSerializer(serializers.ModelSerializer):
         fields = ('users', 'floors', 'block_letter', 'name', 'slug', 'employees', 'complaints')
 
 
+class BlockOnlySerializer(serializers.ModelSerializer):
+    floors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Block
+        fields = ('name', 'slug', 'floors')
+
+
+class FloorOnlySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Floor
+        fields = ('floor_number', 'slug', 'block')
+
+
 
 '''
 All of the fields which declare a Serializer class 

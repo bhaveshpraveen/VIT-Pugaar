@@ -2,7 +2,7 @@ from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework import permissions
 
-from api.views import ComplaintDetail, DepartmentDetail, EmployeeDetail, BlockDetail, FloorDetail, UserDetail
+from api.views import ComplaintDetail, DepartmentDetail, EmployeeDetail, BlockDetail, FloorDetail, UserDetail, BlockOnlyDetail, FloorOnlyDetail
 from .views import (
     ComplaintList,
     UserList,
@@ -27,6 +27,8 @@ urlpatterns = [
     url(r'^users/create/$', UserCreate.as_view()),
     url(r'^users/(?P<pk>[0-9a-zA-Z\-]+)/$', UserDetail.as_view()),
 
+    url(r'^blockdetails/$', BlockOnlyDetail.as_view()),
+    url(r'^floordetails/$', FloorOnlyDetail.as_view()),
 
     url(r'^departments/$', DepartmentList.as_view()),
     url(r'^departments/create/$', DepartmentCreate.as_view()),

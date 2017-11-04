@@ -15,6 +15,8 @@ from .serializers import (
     FloorSerializer,
     BlockSerializer,
     DepartmentSerializer,
+    BlockOnlySerializer,
+    FloorOnlySerializer,
 )
 from complaint.utils import (
     make_slug,
@@ -72,6 +74,16 @@ class BlockList(ListAPIView):
 class BlockDetail(RetrieveAPIView):
     queryset = Block.objects.all()
     serializer_class = BlockSerializer
+
+
+class BlockOnlyDetail(ListAPIView):
+    queryset = Block.objects.all()
+    serializer_class = BlockOnlySerializer
+
+
+class FloorOnlyDetail(ListAPIView):
+    queryset = Floor.objects.all()
+    serializer_class = FloorOnlySerializer
 
 
 class FloorList(ListAPIView):
@@ -387,7 +399,6 @@ class DepartmentCreate(APIView):
                 {'details': e.__str__()},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
 
         return Response(status=status.HTTP_201_CREATED)
 
