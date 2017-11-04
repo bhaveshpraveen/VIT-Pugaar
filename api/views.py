@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -98,79 +99,120 @@ class UserDetail(RetrieveAPIView):
 
 
 """
-Accepted data
-{
-"registration_number": "20BCE0904",
-"email": "bhaveshpraveen10@gmail.com",
-"first_name": "Yoda",
-"phone_number": "9789959296",
-"last_name": "Jedi"
-}
+all fields
+
+registration_number:9bce0904
+email:bhaveshpraveen10@gmail.com
+first_name:Bhavesh
+middle_name: ichigo
+last_name:Praveen
+phone_number:9789959296
+password:12ab34cd
+account_for:S
+block : name-of-a-block
+floor : name-of-a-block-2
+room_no : 256
+
+minimal
+
+registration_number:16BCE0904
+email:bhaveshpraveen10@gmail.com
+first_name:Bhavesh
+phone_number:9789959296
+last_name:Praveen
+password:12ab34cd
+account_for:S
+
 """
 
 
 # todo is_active is set to True, confirm email not set yet
 # todo existing user registers another account, how to handle this case ? [UNIQUE constraint failed: users_user.registration_number]
 
+# todo Permissions
 class UserCreate(APIView):
     def post(self, request, *args, **kwargs):
-            floor_number = request.data.get('floor_number', None)
-            block = request.data.get('block', None)
 
-            data = {
-                'block': None,
-                'floor': None,
-                'registration_number': None,
-                'email': None,
-                'first_name': None,
-                'middle_name': None,
-                'last_name': None,
-                'phone_number': None,
-                'is_active': True,
-                'admin': False,
-                'staff': False,
-                'room_no': None,
-            }
+        data = {
+            'registration_number': request.data.get('registration_number').lower() if request.data.get('registration_number', None) else None,
+            'email': request.data.get('email', None),
+            'first_name': request.data.get('first_name', None),
+            'middle_name': request.data.get('middle_name', None),
+            'last_name': request.data.get('last_name', None),
+            'phone_number': request.data.get('phone_number'),
+            'is_active': True,
+            'admin': False,
+            'staff': False,
+            'room_no': request.data.get('room_no', None),
+        }
 
-            try:
-                data['block'] = Block.objects.get(block_letter=block)
+        floor = request.data.get('floor', None)
+        block = request.data.get('block', None)
 
-            except Exception as e:
-                data['block'] = None
+        if floor:
+            data['floor'] = Floor.objects.get(pk=floor)
 
-            try:
-                data['floor'] = data['block'].floors.get(floor_number=floor_number)
+        if block:
+            data['block'] = Block.objects.get(pk=block)
 
-            except Exception as e:
-                data['floor'] = None
+        account_for = request.data.get('account_for', None)
+        if not account_for:
+            return Response(
+                {'details': 'Send in the required Credentials'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-            data['registration_number'] = request.data.get('registration_number', None)
-            data['email'] = request.data.get('email', None)
-            data['first_name'] = request.data.get('first_name', None)
-            data['middle_name'] = request.data.get('middle_name', None)
-            data['last_name'] = request.data.get('last_name', None)
-            data['phone_number'] = request.data.get('phone_number', None)
-            data['room_no'] = request.data.get('Room_no', None)
+        if not request.data.get('password', None):
+            return Response(
+                {'details': 'Send in the required Credentials'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-            print(data)
+        try:
+            user = User.objects.create(**data)
 
-            try:
-                user = User.objects.create(**data)
+        except Exception as e:
+            return Response(
+                {'details': e.__str__()},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-            except Exception as e:
-                res = {'detail': e.__str__()}
-                print(res)
+        user.set_password(request.data.get('password'))
 
-                return Response(res, status=status.HTTP_400_BAD_REQUEST)
+        if account_for.lower() == 's':
+            group = Group.objects.get(name='Students')
 
-            return Response(status=status.HTTP_201_CREATED)
+        elif account_for.lower() == 'cw':
+            group = Group.objects.get(name='Chief Warden')
+            user.admin = True
+            user.staff = True
+
+        elif account_for.lower() == 'bw':
+            group = Group.objects.get(name='Block Warden')
+
+        elif account_for.lower() == 'dh':
+            group = Group.objects.get(name='Department Head')
+
+        elif account_for.lower() == 'fw':
+            group = Group.objects.get(name='Floor Warden')
+
+        else:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.groups.add(group)
+        user.save()
+        print(user)
+
+        return Response(status=status.HTTP_201_CREATED)
 
 
 '''
 department:electrical
 user_block:name-of-a-block
 user_floor:name-of-a-block-2
-user_room:235
+user_room:235 -> if presen then room complaint
 description:Fan and Light not working
 '''
 
@@ -319,6 +361,8 @@ class FloorCreate(APIView):
 user : 20BCE0904
 name : Sample Department
 '''
+
+#todo permissions
 class DepartmentCreate(APIView):
     def post(self, request, *args, **kwargs):
         data = {
@@ -343,6 +387,7 @@ class DepartmentCreate(APIView):
                 {'details': e.__str__()},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
 
         return Response(status=status.HTTP_201_CREATED)
 
