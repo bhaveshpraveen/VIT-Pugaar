@@ -14,6 +14,7 @@ from .views import (
     ComplaintCreate,
     BlockCreate,
     FloorCreate,
+    EmployeeCreate,
 )
 
 urlpatterns = [
@@ -30,6 +31,7 @@ urlpatterns = [
     url(r'^departments/(?P<pk>[0-9a-zA-Z\-]+)/$', DepartmentDetail.as_view()),
 
     url(r'^employees/$', EmployeeList.as_view()),
+    url(r'^employees/create/$', EmployeeCreate.as_view()),
     url(r'^employees/(?P<pk>[0-9a-zA-Z\-]+)/$', EmployeeDetail.as_view()),
 
     url(r'^blocks/$', BlockList.as_view()),

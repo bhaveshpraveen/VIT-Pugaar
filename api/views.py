@@ -266,6 +266,7 @@ class BlockCreate(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
 """
 block : name-of-f-block
 floor : 3
@@ -322,11 +323,76 @@ class DepartmentCreate(APIView):
 # todo permissions
 class EmployeeCreate(APIView):
     def post(self, request, *args, **kwargs):
-        name = request.data.get('name', None)
-        phone_number = request.data.get('phone_number', None)
-        department = request.data.get('department', None)
-        block = request.data.get('block', None)
-        floor = request.data.get('floor', None)
+        block = request.data.get('block')
+        floor = request.data.get('floor')
+        department = request.data.get('department')
+
+        if department in floor_specific_departments and not floor:
+            return Response(
+                {'details': 'Floor has to be provided if you\'re adding an employee in this department'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        data = {
+            'name': request.data.get('name', None),
+            'phone_number': request.data.get('phone_number', None),
+        }
+        # to check if the block object exists and to retrieve it
+        try:
+            block_obj = Block.objects.get(pk=block)
+            data['block'] = block_obj
+
+        except Exception as e:
+            res = {
+                'details': 'Make sure the given Block exists',
+            }
+            return Response(
+                res,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # to check if department object exists and to retrieve it
+        try:
+            department_obj = Department.objects.get(pk=department)
+            data['department'] = department_obj
+
+        except Exception as e:
+            res = {
+                'details': 'Make sure the given Floor exists'
+                'other'
+            }
+            return Response(
+                res,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # only if a floor is given, floor is not necessary every time
+        if floor:
+            try:
+                floor_obj = Floor.objects.get(pk=floor)
+                data['floor'] = floor_obj
+
+            except Exception as e:
+                res = {
+                    'details': 'Make sure the given Floor exists',
+                    'other_details': e.__str__()
+                }
+                return Response(
+                    res,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        try:
+            employee_obj = Employee.objects.create(**data)
+
+        except Exception as e:
+            return Response(
+                {'details': e.__str__()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return Response(
+            status=status.HTTP_201_CREATED
+        )
 
 
 
