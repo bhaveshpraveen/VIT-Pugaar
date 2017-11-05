@@ -477,6 +477,26 @@ class EmployeeCreate(APIView):
         )
 
 
+class ComplaintComplete(APIView):
+    def post(self, request, pk, *args, **kwargs):
+        try:
+            obj = Complaint.objects.get(pk=pk)
+
+        except Exception as e:
+            return Response(
+                {'details': e.__str__()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        obj.status = False
+        obj.save()
+
+        return Response(
+            {'details': 'Successfully completed'},
+            status=status.HTTP_202_ACCEPTED
+        )
+
+
 
 
 
