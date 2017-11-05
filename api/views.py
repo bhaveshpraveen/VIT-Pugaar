@@ -478,7 +478,7 @@ class EmployeeCreate(APIView):
 
 
 class ComplaintComplete(APIView):
-    def post(self, request, pk, *args, **kwargs):
+    def put(self, request, pk, *args, **kwargs):
         try:
             obj = Complaint.objects.get(pk=pk)
 
