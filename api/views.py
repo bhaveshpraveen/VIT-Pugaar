@@ -2,6 +2,9 @@ import json
 
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -31,6 +34,14 @@ from hostel.models import (
     Block,
     Floor,
 )
+
+
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
 
 
 User = get_user_model()
@@ -242,8 +253,10 @@ description:Fan and Light not working
 
 
  #  todo: what to do if there are no employees satisfying the given criteria while assigning ?
+# @method_decorator(csrf_exempt, name='dispatch')
 class ComplaintCreate(APIView):
     permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def assign_employee(self, data):
         q = Employee.objects.filter(
