@@ -143,7 +143,7 @@ account_for:S
 
 # todo Permissions
 class UserCreate(APIView):
-    def post(self, request, *args, **kwargs):
+    def post(self, request, format=None):
 
         data = {
             'registration_number': request.data.get('registration_number').lower() if request.data.get('registration_number', None) else None,
@@ -219,6 +219,18 @@ class UserCreate(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
+    def delete(self, request, pk, format=None):
+        try:
+            obj = User.objects.get(pk=pk)
+
+        except Exception as e:
+            return Response(
+                {'details': e.__str__()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 '''
 department:electrical
@@ -258,7 +270,7 @@ class ComplaintCreate(APIView):
         else:
             return data
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, format=None):
         user = request.user
         department = request.data.get('department', None)
         block = request.data.get('user_block', None)
@@ -304,7 +316,7 @@ block_letter: e
 # todo Permissions
 class BlockCreate(APIView):
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, format=None):
         print(request.data)
         block_letter = request.data.get('block_letter', None)
 
@@ -320,6 +332,19 @@ class BlockCreate(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+    def delete(self, request, pk, format=None):
+        try:
+            obj = Block.objects.get(pk=pk)
+
+        except Exception as e:
+            return Response(
+                {'details': e.__str__()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 """
 block : name-of-f-block
@@ -329,7 +354,7 @@ floor : 3
 
 # todo Permissions
 class FloorCreate(APIView):
-    def post(self, request, *args, **kwargs):
+    def post(self, request, format=None):
         block = request.data.get('block', None)
         floor = request.data.get('floor', None)
 
@@ -369,6 +394,21 @@ class FloorCreate(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+    def delete(self, request, pk, format=None):
+        try:
+            obj = Floor.objects.get(pk=pk)
+
+        except Exception as e:
+            return Response(
+                {'details': e.__str__()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
 '''
 user : 20BCE0904
 name : Sample Department
@@ -376,7 +416,7 @@ name : Sample Department
 
 #todo permissions
 class DepartmentCreate(APIView):
-    def post(self, request, *args, **kwargs):
+    def post(self, request, format=None):
         data = {
             'name': request.data.get('name')
         }
@@ -402,9 +442,23 @@ class DepartmentCreate(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
+    def delete(self, request, pk, format=None):
+        try:
+            obj = Department.objects.get(pk=pk)
+
+        except Exception as e:
+            return Response(
+                {'details': e.__str__()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 # todo permissions
 class EmployeeCreate(APIView):
-    def post(self, request, *args, **kwargs):
+    def post(self, request, format=None):
         block = request.data.get('block')
         floor = request.data.get('floor')
         department = request.data.get('department')
@@ -476,9 +530,22 @@ class EmployeeCreate(APIView):
             status=status.HTTP_201_CREATED
         )
 
+    def delete(self, request, pk, format=None):
+        try:
+            obj = Employee.objects.get(pk=pk)
+
+        except Exception as e:
+            return Response(
+                {'details': e.__str__()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ComplaintComplete(APIView):
-    def put(self, request, pk, *args, **kwargs):
+    def put(self, request, pk, format=None):
         try:
             obj = Complaint.objects.get(pk=pk)
 
