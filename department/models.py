@@ -21,8 +21,7 @@ class Department(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        obj = super(Department, self).save(*args, **kwargs)
-        return obj
+        super(Department, self).save(*args, **kwargs)
 
 
 class Employee(models.Model):

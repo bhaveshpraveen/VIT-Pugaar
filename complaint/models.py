@@ -6,7 +6,6 @@ from department.models import (
     Employee)
 
 from hostel.models import Floor, Block
-from .utils import inform_employee
 
 
 class Complaint(models.Model):
@@ -33,12 +32,10 @@ class Complaint(models.Model):
         print('In model')
         # self.slug = make_slug(str(self.department.slug), str(self.user_block.slug), str(self.user_floor.floor_number), str(self.user.room_no))
         print(vars(self))
-        obj = super(Complaint, self).save(*args, **kwargs)
+        super(Complaint, self).save(*args, **kwargs)
 
-        # todo: add error handling in case the message wasn't sent, here or in inform_employee
-        inform_employee(obj)
 
-        return obj
+
 
     class Meta:
         unique_together = (
