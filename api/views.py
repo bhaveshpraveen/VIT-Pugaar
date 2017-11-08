@@ -155,6 +155,8 @@ account_for:S
 # todo Permissions
 class UserCreate(APIView):
     def post(self, request, format=None):
+        print('data', request.data)
+        print('user:', request.user)
 
         data = {
             'registration_number': request.data.get('registration_number').lower() if request.data.get('registration_number', None) else None,
@@ -285,6 +287,8 @@ class ComplaintCreate(APIView):
 
     def post(self, request, format=None):
         user = request.user
+        print('user', user)
+
         department = request.data.get('department', None)
         block = request.data.get('user_block', None)
         floor = request.data.get('user_floor', None)
@@ -317,7 +321,15 @@ class ComplaintCreate(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
+        user_complaint_list = obj.user.complaints.all()
+        print('list: ', user_complaint_list)
+
+        serializer = ComplaintSerializer(user_complaint_list, many=True)
+        print(serializer.data)
+
         return Response(
+            serializer.data,
             status=status.HTTP_201_CREATED
         )
 
