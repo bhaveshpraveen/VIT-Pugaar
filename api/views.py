@@ -188,13 +188,17 @@ class UserCreate(APIView):
         account_for = request.data.get('account_for', None)
         if not account_for:
             return Response(
-                {'details': 'Send in the required Credentials'},
+                {
+                    'details': 'Send in the required Credentials'
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         if not request.data.get('password', None):
             return Response(
-                {'details': 'Send in the required Credentials'},
+                {
+                    'details': 'Send in the required Credentials'
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -203,7 +207,9 @@ class UserCreate(APIView):
 
         except Exception as e:
             return Response(
-                {'details': e.__str__()},
+                {
+                    'details': e.__str__()
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -616,6 +622,7 @@ class ComplaintComplete(APIView):
             dict(details='Successfully completed'),
             status=status.HTTP_202_ACCEPTED
         )
+
 
 class ComplaintDelete(APIView):
     permission_classes = (permissions.IsAuthenticated,)
