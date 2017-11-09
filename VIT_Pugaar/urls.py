@@ -13,6 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+
+'''
+to run the function only once when the server starts
+'''
+
+from spam_filter import asf
+
+
 from django.conf.urls import url, include
 from django.contrib import admin
 from api import urls as api_urls
