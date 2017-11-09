@@ -335,6 +335,7 @@ class ComplaintCreate(APIView):
             status=status.HTTP_201_CREATED
         )
 
+
 """
 block_letter: e
 """
@@ -586,3 +587,27 @@ class ComplaintComplete(APIView):
             dict(details='Successfully completed'),
             status=status.HTTP_202_ACCEPTED
         )
+
+class ComplaintDelete(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
+    def delete(self, request, pk):
+        user = request.user
+
+        obj = user.complaints.get(pk=pk)
+        try:
+            obj.delete()
+        except Exception as e:
+
+            return Response(
+                {
+                    'details': 'Something went wrong'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
