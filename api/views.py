@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework import permissions
+from spam_filter.asf import check
 
 from .serializers import (
     UserSerializer,
@@ -289,6 +290,9 @@ class ComplaintCreate(APIView):
         else:
             return data
 
+    def spam(self, description):
+        return not check(description)
+
     def post(self, request, format=None):
         user = request.user
         print('user', user)
@@ -305,8 +309,22 @@ class ComplaintCreate(APIView):
             'user_floor': Floor.objects.get(pk=floor) if floor else None,
             'status': False,
             'issue': False,
-            'description': request.data.get('description', None)
         }
+
+        description = request.data.get('description')
+        print('Checking if spam')
+
+        if self.spam(description):
+
+            return Response(
+                {
+                    'details': 'Your complaint has been flagged as spam',
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        print('Not spam')
+        data['description'] = description
 
         data['slug'] = make_slug(data)
         data = self.assign_employee(data)
@@ -592,13 +610,34 @@ class ComplaintDelete(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
-    def delete(self, request, pk):
+    def delete(self, request):
+        print(request.data)
         user = request.user
-        pk = request.data.get(pk=pk)
+        pk = request.data.get('pk', None)
 
-        obj = user.complaints.get(pk=pk)
+        if not pk:
+
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        print('Here')
+
+
+        try:
+            obj = user.complaints.get(pk=pk)
+
+        except Exception as e:
+
+            return Response(
+                {
+                    'details': 'Check the details'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
             obj.delete()
+
         except Exception as e:
 
             return Response(
@@ -612,3 +651,16 @@ class ComplaintDelete(APIView):
             status=status.HTTP_204_NO_CONTENT,
         )
 
+
+class UserChangePassword(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
+    def patch(self, request):
+        user = request.user
+        new_pass = request.data.get('password')
+
+        user.set_password(new_pass)
+        user.save()
+
+        return Response(status=status.HTTP_200_OK)
