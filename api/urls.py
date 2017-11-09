@@ -32,7 +32,7 @@ from .views import (
 urlpatterns = [
     url(r'^complaints/$', ComplaintList.as_view()),
     url(r'^complaints/create/$', ComplaintCreate.as_view()),
-    url(r'^complaints/delete/(?P<pk>[0-9a-zA-Z\-]+)/$', ComplaintDelete.as_view()),
+    url(r'^complaints/delete/$', ComplaintDelete.as_view()),
     url(r'^complaints/complete/(?P<pk>[0-9a-zA-Z\-]+)/$', ComplaintComplete.as_view()),
     url(r'^complaints/(?P<pk>[0-9a-zA-z\-]+)/$', ComplaintDetail.as_view()),
 
