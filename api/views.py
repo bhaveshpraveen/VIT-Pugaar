@@ -594,6 +594,7 @@ class ComplaintDelete(APIView):
 
     def delete(self, request, pk):
         user = request.user
+        pk = request.data.get(pk=pk)
 
         obj = user.complaints.get(pk=pk)
         try:
