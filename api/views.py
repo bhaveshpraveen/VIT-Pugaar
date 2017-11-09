@@ -291,6 +291,7 @@ class ComplaintCreate(APIView):
             return data
 
     def spam(self, description):
+        """ Return True if not spam  """
         return not check(description)
 
     def post(self, request, format=None):
@@ -437,7 +438,9 @@ class FloorCreate(APIView):
         else:
 
             return Response(
-                {'details': 'Please Provide Valid details'},
+                {
+                    'details': 'Please Provide Valid details'
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -447,7 +450,9 @@ class FloorCreate(APIView):
 
         except Exception as e:
             return Response(
-                {'details': e.__str__()},
+                {
+                    'details': e.__str__()
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -472,7 +477,9 @@ class DepartmentCreate(APIView):
 
         if not user:
             return Response(
-                {'details': 'Please provide a user as the head of the department'},
+                {
+                    'details': 'Please provide a user as the head of the department'
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -483,7 +490,9 @@ class DepartmentCreate(APIView):
 
         except Exception as e:
             return Response(
-                e.__str__(),
+                {
+                    'details': e.__str__()
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -495,7 +504,9 @@ class DepartmentCreate(APIView):
 
         except Exception as e:
             return Response(
-                e.__str__(),
+                {
+                    'details': e.__str__()
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -565,7 +576,7 @@ class EmployeeCreate(APIView):
         except Exception as e:
 
             return Response(
-                e.__str__(),
+                dict(details=e.__str__()),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
