@@ -1,4 +1,4 @@
-import json
+# todo To my future-self: This thing's a mess, try to put the repeated pieces of code in a separate function. Atleast Try!!
 
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
@@ -294,13 +294,9 @@ class ComplaintCreate(APIView):
             obj = Complaint.objects.create(**data)
 
         except Exception as e:
-            res = {
-                'details': e.__str__()
-            }
 
-            print(res)
             return Response(
-                {'details': res},
+                e.__str__(),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -328,7 +324,7 @@ class BlockCreate(APIView):
 
         else:
             return Response(
-                {'details': 'Please Provide Valid details'},
+                'Please Provide Valid details',
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -338,7 +334,7 @@ class BlockCreate(APIView):
 
         except Exception as e:
             return Response(
-                {'details': e.__str__()},
+                e.__str__(),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -364,12 +360,9 @@ class FloorCreate(APIView):
                 block_obj = Block.objects.get(pk=block)
 
             except Exception as e:
-                res = {
-                    'details': 'Make sure the given Block exists',
-                    'other_details': e.__str__()
-                }
+
                 return Response(
-                    res,
+                    'Make sure the given Block exists',
                     status=status.HTTP_400_BAD_REQUEST
                 )
             try:
@@ -381,7 +374,7 @@ class FloorCreate(APIView):
             except Exception as e:
 
                 return Response(
-                    {'details': e.__str__()},
+                    e.__str__(),
                     status=status.HTTP_400_BAD_REQUEST
                 )
             print('Success Return')
@@ -390,7 +383,7 @@ class FloorCreate(APIView):
         else:
 
             return Response(
-                {'details': 'Please Provide Valid details'},
+                'Please Provide Valid details',
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -436,7 +429,7 @@ class DepartmentCreate(APIView):
 
         except Exception as e:
             return Response(
-                {'details': e.__str__()},
+                e.__str__(),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -448,7 +441,7 @@ class DepartmentCreate(APIView):
 
         except Exception as e:
             return Response(
-                {'details': e.__str__()},
+                e.__str__(),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -479,11 +472,9 @@ class EmployeeCreate(APIView):
             data['block'] = block_obj
 
         except Exception as e:
-            res = {
-                'details': 'Make sure the given Block exists',
-            }
+
             return Response(
-                res,
+                'Make sure the given Block exists',
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -493,12 +484,9 @@ class EmployeeCreate(APIView):
             data['department'] = department_obj
 
         except Exception as e:
-            res = {
-                'details': 'Make sure the given Floor exists'
-                'other'
-            }
+
             return Response(
-                res,
+                'Make sure the given Floor exists',
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -509,20 +497,19 @@ class EmployeeCreate(APIView):
                 data['floor'] = floor_obj
 
             except Exception as e:
-                res = {
-                    'details': 'Make sure the given Floor exists',
-                    'other_details': e.__str__()
-                }
+
                 return Response(
-                    res,
+
+                    'Make sure the given Floor exists',
                     status=status.HTTP_400_BAD_REQUEST
                 )
         try:
             employee_obj = Employee.objects.create(**data)
 
         except Exception as e:
+
             return Response(
-                {'details': e.__str__()},
+                e.__str__(),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -536,7 +523,7 @@ class EmployeeCreate(APIView):
 
         except Exception as e:
             return Response(
-                {'details': e.__str__()},
+                e.__str__(),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -551,7 +538,7 @@ class ComplaintComplete(APIView):
 
         except Exception as e:
             return Response(
-                {'details': e.__str__()},
+                e.__str__(),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -559,17 +546,6 @@ class ComplaintComplete(APIView):
         obj.save()
 
         return Response(
-            {'details': 'Successfully completed'},
+            'Successfully completed',
             status=status.HTTP_202_ACCEPTED
         )
-
-
-
-
-
-
-
-
-
-
-
