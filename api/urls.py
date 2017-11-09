@@ -21,6 +21,7 @@ from .views import (
     BlockList,
     FloorList,
     UserCreate,
+    UserChangePassword,
     ComplaintCreate,
     ComplaintDelete,
     BlockCreate,
@@ -39,6 +40,7 @@ urlpatterns = [
     url(r'^users/$', UserList.as_view()),
     url(r'^users/create/$', UserCreate.as_view()),
     url(r'^users/delete/(?P<pk>[0-9a-zA-z\-]+)/$', UserCreate.as_view()),
+    url(r'^users/change_password/$', UserChangePassword.as_view()),
     url(r'^users/(?P<pk>[0-9a-zA-Z\-]+)/$', UserDetail.as_view()),
 
     url(r'^blockdetails/$', BlockOnlyDetail.as_view()),
