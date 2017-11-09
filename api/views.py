@@ -38,6 +38,7 @@ from hostel.models import (
 
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
 
+
 class CsrfExemptSessionAuthentication(SessionAuthentication):
 
     def enforce_csrf(self, request):
@@ -154,6 +155,9 @@ account_for:S
 
 # todo Permissions
 class UserCreate(APIView):
+    permission_classes = (permissions.AllowAny, )
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
     def post(self, request, format=None):
         print('data', request.data)
         print('user:', request.user)
@@ -313,7 +317,9 @@ class ComplaintCreate(APIView):
         except Exception as e:
 
             return Response(
-                e.__str__(),
+                {
+                    'details': e.__str__()
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -349,7 +355,9 @@ class BlockCreate(APIView):
 
         else:
             return Response(
-                'Please Provide Valid details',
+                {
+                    'details': 'Please Provide Valid details'
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -387,7 +395,9 @@ class FloorCreate(APIView):
             except Exception as e:
 
                 return Response(
-                    'Make sure the given Block exists',
+                    {
+                        'details': 'Make sure the given Block exists'
+                    },
                     status=status.HTTP_400_BAD_REQUEST
                 )
             try:
@@ -408,7 +418,7 @@ class FloorCreate(APIView):
         else:
 
             return Response(
-                'Please Provide Valid details',
+                {'details': 'Please Provide Valid details'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -499,7 +509,9 @@ class EmployeeCreate(APIView):
         except Exception as e:
 
             return Response(
-                'Make sure the given Block exists',
+                {
+                    'details': 'Make sure the given Block exists'
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -511,7 +523,7 @@ class EmployeeCreate(APIView):
         except Exception as e:
 
             return Response(
-                'Make sure the given Floor exists',
+                dict(details='Make sure the given Floor exists'),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -525,7 +537,7 @@ class EmployeeCreate(APIView):
 
                 return Response(
 
-                    'Make sure the given Floor exists',
+                    dict(details='Make sure the given Floor exists'),
                     status=status.HTTP_400_BAD_REQUEST
                 )
         try:
@@ -548,7 +560,7 @@ class EmployeeCreate(APIView):
 
         except Exception as e:
             return Response(
-                e.__str__(),
+                dict(details=e.__str__()),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -563,7 +575,7 @@ class ComplaintComplete(APIView):
 
         except Exception as e:
             return Response(
-                e.__str__(),
+                dict(details=e.__str__()),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -571,6 +583,6 @@ class ComplaintComplete(APIView):
         obj.save()
 
         return Response(
-            'Successfully completed',
+            dict(details='Successfully completed'),
             status=status.HTTP_202_ACCEPTED
         )
