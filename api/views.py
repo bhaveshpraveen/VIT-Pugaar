@@ -597,7 +597,7 @@ class EmployeeCreate(APIView):
 
 
 class ComplaintComplete(APIView):
-    def put(self, request, pk, format=None):
+    def patch(self, request, pk, format=None):
         try:
             obj = Complaint.objects.get(pk=pk)
 
