@@ -254,7 +254,7 @@ class UserCreate(APIView):
 department:electrical
 user_block:name-of-a-block
 user_floor:name-of-a-block-2
-user_room:235 -> if presen then room complaint
+user_room:235 -> if present then room complaint
 description:Fan and Light not working
 '''
 
@@ -327,7 +327,6 @@ class ComplaintCreate(APIView):
         print('Not spam')
         data['description'] = description
 
-        data['slug'] = make_slug(data)
         data = self.assign_employee(data)
 
         try:
@@ -341,7 +340,6 @@ class ComplaintCreate(APIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-
 
         user_complaint_list = obj.user.complaints.all()
         print('list: ', user_complaint_list)
@@ -609,7 +607,8 @@ class ComplaintComplete(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        obj.status = False
+        obj.status = True
+
         obj.save()
 
         return Response(

@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+from complaint.utils import make_slug
 from department.models import (
     Department,
     Employee)
@@ -29,7 +30,8 @@ class Complaint(models.Model):
 
     # TODO replace this method with methods in the views that take parameters as per the room or floor complaint and save them accordingly
     def save(self, *args, **kwargs):
-        print('In model')
+        self.slug = make_slug(self)
+
         # self.slug = make_slug(str(self.department.slug), str(self.user_block.slug), str(self.user_floor.floor_number), str(self.user.room_no))
         print(vars(self))
         super(Complaint, self).save(*args, **kwargs)
