@@ -8,13 +8,15 @@ from django.conf import settings
 
 
 def make_slug(data):
+    print('In make slug')
+    print(data)
     slug = "{} {} {} {}".format(
-        data['department'],
-        data['user_block'],
-        data['user_floor'],
-        data['user_room'] if data['user_room'] else ''
+        data.department,
+        data.user_block,
+        data.user_floor,
+        data.user_room if data.user_room else ''
     )
-
+    print('Complaint slug =', slug)
     return slugify(slug)
 
 
