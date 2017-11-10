@@ -608,10 +608,6 @@ class ComplaintComplete(APIView):
             )
 
         obj.status = True
-<<<<<<< HEAD
-=======
-
->>>>>>> 4a08514c30ec9f7dd797ad333ece050c01bb6ca7
         obj.save()
 
         return Response(
