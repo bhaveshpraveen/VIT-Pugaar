@@ -188,13 +188,17 @@ class UserCreate(APIView):
         account_for = request.data.get('account_for', None)
         if not account_for:
             return Response(
-                {'details': 'Send in the required Credentials'},
+                {
+                    'details': 'Send in the required Credentials'
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         if not request.data.get('password', None):
             return Response(
-                {'details': 'Send in the required Credentials'},
+                {
+                    'details': 'Send in the required Credentials'
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -203,7 +207,9 @@ class UserCreate(APIView):
 
         except Exception as e:
             return Response(
-                {'details': e.__str__()},
+                {
+                    'details': e.__str__()
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -237,24 +243,18 @@ class UserCreate(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
-    def delete(self, request, pk, format=None):
-        try:
-            obj = User.objects.get(pk=pk)
+    def delete(self, request,format=None):
 
-        except Exception as e:
-            return Response(
-                {'details': e.__str__()},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        user = request.user
+        user.delete()
 
-        obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 '''
 department:electrical
 user_block:name-of-a-block
 user_floor:name-of-a-block-2
-user_room:235 -> if presen then room complaint
+user_room:235 -> if present then room complaint
 description:Fan and Light not working
 '''
 
@@ -291,6 +291,7 @@ class ComplaintCreate(APIView):
             return data
 
     def spam(self, description):
+        """ Return True if not spam  """
         return not check(description)
 
     def post(self, request, format=None):
@@ -326,7 +327,6 @@ class ComplaintCreate(APIView):
         print('Not spam')
         data['description'] = description
 
-        data['slug'] = make_slug(data)
         data = self.assign_employee(data)
 
         try:
@@ -340,7 +340,6 @@ class ComplaintCreate(APIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-
 
         user_complaint_list = obj.user.complaints.all()
         print('list: ', user_complaint_list)
@@ -437,7 +436,9 @@ class FloorCreate(APIView):
         else:
 
             return Response(
-                {'details': 'Please Provide Valid details'},
+                {
+                    'details': 'Please Provide Valid details'
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -447,7 +448,9 @@ class FloorCreate(APIView):
 
         except Exception as e:
             return Response(
-                {'details': e.__str__()},
+                {
+                    'details': e.__str__()
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -472,7 +475,9 @@ class DepartmentCreate(APIView):
 
         if not user:
             return Response(
-                {'details': 'Please provide a user as the head of the department'},
+                {
+                    'details': 'Please provide a user as the head of the department'
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -483,7 +488,9 @@ class DepartmentCreate(APIView):
 
         except Exception as e:
             return Response(
-                e.__str__(),
+                {
+                    'details': e.__str__()
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -495,7 +502,9 @@ class DepartmentCreate(APIView):
 
         except Exception as e:
             return Response(
-                e.__str__(),
+                {
+                    'details': e.__str__()
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -565,7 +574,7 @@ class EmployeeCreate(APIView):
         except Exception as e:
 
             return Response(
-                e.__str__(),
+                dict(details=e.__str__()),
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -599,12 +608,17 @@ class ComplaintComplete(APIView):
             )
 
         obj.status = True
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4a08514c30ec9f7dd797ad333ece050c01bb6ca7
         obj.save()
 
         return Response(
             dict(details='Successfully completed'),
             status=status.HTTP_202_ACCEPTED
         )
+
 
 class ComplaintDelete(APIView):
     permission_classes = (permissions.IsAuthenticated,)
