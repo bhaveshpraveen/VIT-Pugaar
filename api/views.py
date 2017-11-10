@@ -598,7 +598,7 @@ class ComplaintComplete(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        obj.status = False
+        obj.status = True
         obj.save()
 
         return Response(
