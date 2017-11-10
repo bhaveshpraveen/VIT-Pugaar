@@ -243,17 +243,11 @@ class UserCreate(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
-    def delete(self, request, pk, format=None):
-        try:
-            obj = User.objects.get(pk=pk)
+    def delete(self, request,format=None):
 
-        except Exception as e:
-            return Response(
-                {'details': e.__str__()},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        user = request.user
+        user.delete()
 
-        obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 '''
