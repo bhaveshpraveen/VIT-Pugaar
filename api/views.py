@@ -114,9 +114,32 @@ class UserList(ListAPIView):
     serializer_class = UserSerializer
 
 
-class UserDetail(RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class UserDetail(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
+    def post(self, request, format=None):
+        user = request.user
+        serializer = UserSerializer(user)
+        print(serializer.data)
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+    def put(self, request, format=None):
+        user = request.user
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                serializer.data
+            )
+        return Response(
+            serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+
 
 
 #todo Refactor UserDetail
@@ -266,6 +289,7 @@ class ComplaintCreate(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def assign_employee(self, data):
+        print('in Assign employee', data)
         q = Employee.objects.filter(
             department=data['department'],
             block=data['user_block']
@@ -327,7 +351,10 @@ class ComplaintCreate(APIView):
         print('Not spam')
         data['description'] = description
 
+        print('Attempting to assigning employee')
         data = self.assign_employee(data)
+
+        print('Assigned Employee')
 
         try:
             obj = Complaint.objects.create(**data)
@@ -668,7 +695,7 @@ class UserChangePassword(APIView):
 
     def patch(self, request):
         user = request.user
-        new_pass = request.data.get('password')
+        new_pass = request.data.get('new_password')
 
         user.set_password(new_pass)
         user.save()

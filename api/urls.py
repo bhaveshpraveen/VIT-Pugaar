@@ -41,7 +41,9 @@ urlpatterns = [
     url(r'^users/create/$', UserCreate.as_view()),
     url(r'^users/delete/$', UserCreate.as_view()),
     url(r'^users/change_password/$', UserChangePassword.as_view()),
-    url(r'^users/(?P<pk>[0-9a-zA-Z\-]+)/$', UserDetail.as_view()),
+
+    url(r'^userdetail/$', UserDetail.as_view()),
+    url(r'^userdetail/update/$', UserDetail.as_view()),
 
     url(r'^blockdetails/$', BlockOnlyDetail.as_view()),
     url(r'^floordetails/$', FloorOnlyDetail.as_view()),
